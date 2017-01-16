@@ -67,7 +67,7 @@ def file_exists(path):
     return os.path.isfile(path)
 
 def get_training_data(product):
-    with open(product + '.json') as data_file:
+    with open('./learningData/' + product + '.json') as data_file:
         return json.load(data_file)
 
 

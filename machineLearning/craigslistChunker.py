@@ -47,7 +47,7 @@ class CraigListWordChunker(nltk.ChunkParserI): # [_consec-chunker]
         conlltags = [(w,t,c) for ((w,t),c) in tagged_sents]
         return nltk.chunk.conlltags2tree(conlltags)
 ########################################################################
-####Features
+##########################Features######################################
 
 def last_letter_ft(s):
     return s[-1:]
@@ -81,6 +81,9 @@ def first_letter_capital_ft(s):
     first_letter = s[-1:]
     return first_letter.isupper()
 
+def word_length_ft(s):
+    return len(s)
+
 def npchunk_features(sentence, i, history):
     word, pos = sentence[i]
     word = str(word)
@@ -110,27 +113,11 @@ def npchunk_features(sentence, i, history):
             "first_two_letters": first_two_letters_ft(lword),
             "alpha_num_ratio": alpha_num_ratio_ft(lword),
             "largest_number": largest_number_ft(lword),
-            "first_letter_capital": first_letter_capital_ft(word)
-            
+            "first_letter_capital": first_letter_capital_ft(word),
+            "word_length": word_length_ft(word)
             }
             # "tags-since-dt": tags_since_dt(sentence, i)} 
 
-#########################################################################
-
-class TrigramChunker(nltk.ChunkParserI):
-    def __init__(self, train_sents):
-        train_data = [[(t,c) for [w,t,c] in sent]
-                      for sent in train_sents]
-        self.tagger = nltk.TrigramTagger(train_data)
-
-
-    def parse(self, sentence):
-        pos_tags = [pos for (word,pos) in sentence]
-        tagged_pos_tags = self.tagger.tag(pos_tags)
-        chunktags = [chunktag for (pos, chunktag) in tagged_pos_tags]
-        conlltags = [(word, pos, chunktag) for ((word,pos),chunktag)
-                     in zip(sentence, chunktags)]
-        return nltk.chunk.conlltags2tree(conlltags)
 ########################################################################
 
 def conll_tag_chunks(chunk_sents):
@@ -146,7 +133,7 @@ def cnll_to_tree(chunk_sents):
     return train_data_tree
 
 ########################################################################
-file = open('annotationIOB.txt', 'r')
+file = open('learningData/annotationIOB.txt', 'r')
 chunk = json.loads(file.read())
 random.shuffle(chunk)
 train_sents = chunk[:400];
@@ -165,7 +152,8 @@ listing = "Retina Macbook Pro in great condition-- selling because I got a new c
 tokens = nltk.word_tokenize(listing)
 tokens = nltk.pos_tag(tokens)
 # pprint(tokens)
-clchunker.parse(tokens).draw()
+result_tree  = clchunker.parse(tokens)
+print(result_tree[0][0])
 # print(clchunker.evaluate(test_sents_tree))
 
 # trigramChunk = TrigramChunker(train_sents)
