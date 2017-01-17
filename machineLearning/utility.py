@@ -5,8 +5,6 @@ from nltk import download
 from nltk.corpus import stopwords
 from nltk.tokenize import wordpunct_tokenize
 
-
-
 def conll_tag_chunks(chunk_sents):
     tag_sents = [nltk.chunk.tree2conlltags(tree) for tree in chunk_sents]
     return [[[w, t, c] for (w, t, c) in chunk_tags] for chunk_tags in tag_sents]

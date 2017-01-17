@@ -1,10 +1,10 @@
-
 # Natural Language Toolkit: code_classifier_chunker
 import json
 import pickle
 import dill as pickle
 import random
-from nltk import NaiveBayesClassifier, classify, MaxentClassifier
+from nltk import NaiveBayesClassifier, classify, MaxentClassifier, download
+from nltk.tokenize import wordpunct_tokenize
 import os.path
 from pprint import pprint
 import nltk
@@ -140,11 +140,8 @@ def train_spec_classifier(filename):
         prob_dist = nb_classifier.prob_classify(spec_features(s))
         all_prob = map(lambda sample: (sample, prob_dist.prob(sample)), prob_dist.samples())
         return list(reversed(sorted(all_prob, key=lambda tup: tup[1])))
-    return classifier
 
-# def get_training_data(product):
-#     with open('./learningData/' + product + '.json') as data_file:
-#         return json.load(data_file)
+    return classifier
 
 def spec_classifier(s):
     if file_exists('spec_classifier.pkl'):
@@ -169,5 +166,4 @@ def spec_classifier(s):
 #         self.classifier = CraigListWordChunkTagger(tagged_sents)
 #     def parse(phrase, )
 ##############################################################################################
-
 
