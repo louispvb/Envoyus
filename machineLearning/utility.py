@@ -48,26 +48,7 @@ def file_exists(path):
 def get_training_data(product):
     with open('./learningData/' + product + '.json') as data_file:
         return json.load(data_file)
-
-def spec_classifier(s):
-    if file_exists('spec_classifier.pkl'):
-        # print('Loading spec classifier from pickle')
-        f = open('spec_classifier.pkl', 'rb')
-        classifier = pickle.load(f)
-        f.close()
-        return classifier(s)
-    else:
-        print('Training new spec classifier...')
-        classifier = train_spec_classifier()
-        f = open('spec_classifier.pkl', 'wb')
-        pickle.dump(classifier, f)
-        f.close()
-        return classifier(s)
-
-def processPosting(postArr):
-    for phrase in postArr:
-        print(phrase, spec_classifier(phrase)[:2])
-
+        
 def get_training_data(filename):
     with open(filename) as data_file:
         return json.load(data_file)

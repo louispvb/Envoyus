@@ -2,23 +2,23 @@
 import json
 import random
 from utility import disambiguation, convertArrayCk, file_exists, get_training_data
-from machineLearningClass import CraigListWordChunker, spec_classifier
+from machineLearningClass import CraigListWordChunker, spec_classifier, parseContainer
+import sys
 #########################################################################
 def processPosting(postArr):
     for phrase in postArr:
-        print(phrase, spec_classifier(phrase)[:2])
+        classifierTag = spec_classifier(phrase)[:2]
+        # print(phrase)
+        # print (classifierTag)
+        temp = [[spec for spec in classPair] for classPair in classifierTag]
+        print(json.dumps([phrase, temp]))
 
-chunk = get_training_data('learningData/annotationIOB.txt')
-random.shuffle(chunk)
-train_sents = chunk[:400];
-test_sents = chunk[400:]
-clChunker = CraigListWordChunker(train_sents)
-listing = "Retina Macbook Pro in great condition-- selling because I got a new computer. Model is A1502 (Late 2013), special-upgraded with a 500gb SSD, and includes a bonus flush-fitting / removable 128gb expansion drive in the SD card slot. All the information on this model is available here: http://www.everymac.com/systems/apple/macbook_pro/specs/macbook-pro-core-i5-2.4-13-late-2013-retina-display-specs.html Full specifications: 2.4GHz dual-core Intel Core i5 processor (Turbo Boost up to 2.9GHz) with 3MB shared L3 cache 8GB of 1600MHz DDR3L onboard memory 500GB flash storage Intel Iris Graphics 802.11ac Wi-Fi wireless networking; Bluetooth 4.0 Runs anything you throw at it, including stuff like Photoshop or Diablo/Starcraft. Running the latest MacOS version (Sierra 10.12.2). Cash only. Pickup can happen during the daytime Monday Jan 2., or in the evening or early morning later this week. Email me with a number to reach you and a time or two when you could come to Ingleside to pick up."
-resultArrayKeySpecs = clChunker.parse(listing, convertArrayCk)
-# print (resultArrayKeySpecs)
-print(listing)
+
+
+# listing = "\n         \n13\" MacBook Pro  \n2.5 GHz Core i5 (Mid 2012) Processor  \n500 GB Hard Drive  \n4 GB Ram  \nAlmost perfect condition. No scratches, dents or blemishes. Has had overlay case and screen protector since day one. Comes with original box and power supply.    "
+clChunker = parseContainer()
+resultArrayKeySpecs = clChunker.parse(sys.argv[1], convertArrayCk)
 processPosting(resultArrayKeySpecs)
-# print(spec_classifier('8GB')[:2])
 
 
 

@@ -8,6 +8,8 @@ from nltk import NaiveBayesClassifier, classify, MaxentClassifier
 import os.path
 from pprint import pprint
 import nltk
+from nltk import sent_tokenize, word_tokenize, pos_tag
+
 import numpy
 import re
 from nltk.corpus import conll2000, stopwords
@@ -36,43 +38,50 @@ class CraigListWordChunkTagger(nltk.TaggerI): # [_consec-chunk-tagger]
         return zip(sentence, history)
 
 
+def parseDescription(text):
+        paragraphs = [p for p in text.split('\n') if p]
+        sentences = []
+        for paragraph in paragraphs:
+            sentences.append(paragraph)
+             # for sentence in sent_tokenize(paragraph):
+             #     sentences.append(sentence)
+        return sentences
+
 class CraigListWordChunker(nltk.ChunkParserI): # [_consec-chunker]
     def __init__(self, train_sents):
         tagged_sents = [[((w,t),c) for [w,t,c] in sent]
                         for sent in train_sents]
         self.tagger = CraigListWordChunkTagger(tagged_sents)
 
-    def parse(self, sentence, convertFn):
-        sentenceTokens = nltk.word_tokenize(sentence)
-        sentenceTokens = nltk.pos_tag(sentenceTokens)
-        tagged_sents = self.tagger.tag(sentenceTokens)
-        conlltags = [(w,t,c) for ((w,t),c) in tagged_sents]
+    def parse(self, description, convertFn):
+        sentences = parseDescription(description)
+        totalTags = []
+        for sentence in sentences:
+            sentenceTokens = nltk.word_tokenize(sentence)
+            sentenceTokens = nltk.pos_tag(sentenceTokens)
+            tagged_sents = self.tagger.tag(sentenceTokens)
+            totalTags += tagged_sents
+        conlltags = [(w,t,c) for ((w,t),c) in totalTags]
         return convertFn(nltk.chunk.conlltags2tree(conlltags))
 
-##############################################################################################
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+def parseContainer():
+    if file_exists('keyword_chunking.pkl'):
+        # print('Loading spec classifier from pickle')
+        f = open('keyword_chunking.pkl', 'rb')
+        clChunker = pickle.load(f)
+        f.close()
+        return clChunker
+    else:
+        # print('Training new chunking...')
+        chunk = get_training_data('learningData/annotationIOB.txt')
+        random.shuffle(chunk)
+        train_sents = chunk[:400];
+        test_sents = chunk[400:]
+        clChunker = CraigListWordChunker(train_sents)
+        f = open('keyword_chunking.pkl', 'wb')
+        pickle.dump(clChunker, f)
+        f.close()
+        return clChunker
 
 ##############################################################################################
 def train_spec_classifier(filename):
@@ -139,7 +148,9 @@ def train_spec_classifier(filename):
     def classifier(s):
         prob_dist = nb_classifier.prob_classify(spec_features(s))
         all_prob = map(lambda sample: (sample, prob_dist.prob(sample)), prob_dist.samples())
+        # print (all_prob)
         return list(reversed(sorted(all_prob, key=lambda tup: tup[1])))
+
     return classifier
 
 def spec_classifier(s):
