@@ -1,10 +1,31 @@
 import React from 'react';
+import { createStore, applyMiddleware } from 'redux';
+import thunkMiddleware from 'redux-thunk'
+import createLogger from 'redux-logger'
+import { Provider } from 'react-redux';
 import { Router, Route, Link, IndexRoute, hashHistory } from 'react-router';
-import App from './App';
-import ResultsPage from './ResultsPage';
+
+import MainPage from './pages/MainPage';
+import ResultsPage from './pages/ResultsPage';
+import { HCenter } from './containers';
+import userReducer from './reducers/userReducer';
+
+const store = createStore(
+  userReducer,
+  applyMiddleware(
+    thunkMiddleware,
+    createLogger()
+  )
+);
 
 const NoMatch = _ => (
-  <div>Sorry, that page was not found.</div>
+  <HCenter style={{
+    fontSize: 42,
+    width: '100vw',
+    height: '100vh',
+  }}>
+    Sorry, that page was not found :(
+  </HCenter>
 );
 
 const RouteContainer = props => (
@@ -17,13 +38,15 @@ const RouteContainer = props => (
 );
 
 const RouterView = (
-  <Router history={ hashHistory }>
-    <Route path="/" component={ RouteContainer }>
-      <IndexRoute component={ App } />
-      <Route path="results" component={ ResultsPage }/>
-      <Route path="*" component={ NoMatch }/>
-    </Route>
-  </Router>
+  <Provider store={ store }>
+    <Router history={ hashHistory }>
+      <Route path="/" component={ RouteContainer }>
+        <IndexRoute component={ MainPage } />
+        <Route path="results(/:query)" component={ ResultsPage } />
+        <Route path="*" component={ NoMatch } />
+      </Route>
+    </Router>
+  </Provider>
 );
 
 export default RouterView;
