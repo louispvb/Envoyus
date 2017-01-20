@@ -2,7 +2,7 @@
 import json
 import random
 from utility import disambiguation, convertArrayCk, file_exists, get_training_data, convertArrayCo
-from machineLearningClass import CraigListWordChunker, spec_classifier, parseContainer, condition
+from machineLearningClass import CraigListWordChunker, spec_classifier, parseContainer, condition_classifier
 import sys
 #########################################################################
 def processPosting(postArr):
@@ -13,17 +13,17 @@ def processPosting(postArr):
         temp = [[spec for spec in classPair] for classPair in classifierTag]
         print(json.dumps([phrase, temp]))
     for phrase in postArr['condition']:
-        classifierTag = spec_classifier(phrase)[:2]
+        conditionTag = condition_classifier(phrase)[:2]
         # print(phrase)
         # print (classifierTag)
-        temp = [[spec for spec in classPair] for classPair in classifierTag]
+        temp = [[spec for spec in classPair] for classPair in conditionTag]
         print(json.dumps([phrase, temp]))
 
 
 
-listing = "\n         \n13\" MacBook Pro  \n2.5 GHz Core i5 (Mid 2012) Processor  \n500 GB Hard Drive  \n4 GB Ram  \nAlmost perfect condition. No scratches, dents or blemishes. Has had overlay case and screen protector since day one. Comes with original box and power supply.    "
+# listing = "\n         \n13\" MacBook Pro  \n2.5 GHz Core i5 (Mid 2012) Processor  \n500 GB Hard Drive  \n4 GB Ram  \nAlmost perfect condition. No scratches, dents or blemishes. Has had overlay case and screen protector since day one. Comes with original box and power supply.    "
 clChunker = parseContainer()
-resultArrayKeySpecs = clChunker.parse(listing, convertArrayCk, convertArrayCo)
+resultArrayKeySpecs = clChunker.parse(sys.argv[1], convertArrayCk, convertArrayCo)
 processPosting(resultArrayKeySpecs)
 
 

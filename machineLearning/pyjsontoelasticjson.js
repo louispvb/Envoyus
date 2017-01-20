@@ -30,16 +30,31 @@ var machineLearnListing = async function(inputStr) {
           accumulator[spec[0]] = []
         } 
         accumulator[spec[0]].push(current[0])
+      } else if (!Number.isNaN(Number(spec[0]))) {
+        accumulator.condition.push([spec[0],spec[1]])
       }
     })
     return accumulator
-  }, {})
+  }, {
+    condition: []
+  })
   specWeCareAbout.forEach(spec=>{
     if (!specObj.hasOwnProperty(spec)) {
       specObj[spec] = []
       specObj[spec].push("")
     }
   })
+  var conditionCounter = 0
+  specObj.condition = Math.round(specObj.condition.reduce((accumulator, current)=>{
+    if (current[1] > 0.8) {
+      accumulator+=Number(current[0]);
+      conditionCounter+=1
+    }
+    return accumulator;
+  }, 0) / conditionCounter)
+  if (conditionCounter === 0) {
+    specObj.condition = 'Unavailable'
+  }
   return specObj
 }
 
@@ -52,7 +67,10 @@ json = JSON.parse(json.toString());
   for (let i = 0; i < length; i++) {
     let listing = json[i];
     let output = await machineLearnListing(listing.description)
+    // console.log(output)
     listing.specs = output
+    listing.condition = output.condition
+    console.log(listing.condition)
     let str = JSON.stringify({ "index": { "_index": "cl", "_type": "listing" }}) + '\n' + JSON.stringify(listing);
     result += str + '\n'
     let completionPercent = Math.floor(i / length * 100)
