@@ -1,2 +1,8 @@
 export const SET_SEARCH_QUERY = 'SET_SEARCH_QUERY';
 export const SET_LISTINGS = 'SET_LISTINGS';
+export const SET_TOKEN = 'SET_TOKEN';
+export const SET_CITIES = 'SET_CITIES';
+export const SELECT_CITY = 'SELECT_CITY';
+export const SET_RESULT_COUNT = 'SET_RESULT_COUNT';
+export const SET_CONDITION_FILTER = 'SET_CONDITION_FILTER';
+export const SET_PRICE_FILTER = 'SET_PRICE_FILTER';

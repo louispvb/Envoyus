@@ -18,7 +18,7 @@ export const ListingItem = ({width, height, data, ...props}) => {
         backgroundRepeat: 'no-repeat',
         filter: 'brightness(1.3) grayscale(0.5) sepia(0.1)'
       }} />
-        <div><span className='list-item-price'>{'$' + data.price}</span> <span className='list-item-title'>{data.title}</span>
+        <div><span className='list-item-price'>{data.price ? '$' + data.price : ''}</span> <span className='list-item-title'>{data.title}</span>
       </div>
     </div>
   )

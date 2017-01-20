@@ -5,23 +5,10 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
 
-import { performSearch } from '../actions/userActions';
+import { performSearch, setToken, fetchCities, selectCity } from '../actions/userActions';
 
 import { HCenter, ListingGrid, LabeledDropdown, LInput  } from '../components';
-
-const NavLinks = _ => (
-  <header className='splash-nav'>
-    <div className='nav-links-ctn'>
-      About
-    </div>
-    <div className='nav-links-ctn'>
-      Sign Up
-    </div>
-    <div className='nav-links-ctn'>
-      Login
-    </div>
-  </header>
-)
+import { NavLinksCtn } from '../containers';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -30,6 +17,14 @@ class MainPage extends React.Component {
       searchText: ''
     }
     this.onSearch = this.onSearch.bind(this);
+  }
+  componentWillMount() {
+    let token = null;
+    if (document.cookie) {
+      token = document.cookie.split('=')[1]
+      this.props.setToken(token);
+    }
+    this.props.fetchCities();
   }
 
   onSearch() {
@@ -40,7 +35,7 @@ class MainPage extends React.Component {
     return (
       <div className='splash-ctn'>
         <div className='splash-panel'>
-          <NavLinks />
+          <NavLinksCtn navLinkClass='nav-links-ctn' navLinkCtnClass='splash-nav' />
           <HCenter className='splash-image-ctn'>
             <div className='splash-content-ctn'>
               <div className='splash-intro-text'>
@@ -78,6 +73,8 @@ class MainPage extends React.Component {
                   <LabeledDropdown
                     label='City'
                     width='100%'
+                    listData={this.props.cities.map(city => city.cityName)}
+                    onSelect={this.props.selectCity}
                     activeClass='input-ctn-active-style' />
                 </div>
                 <div style={{
@@ -109,4 +106,4 @@ class MainPage extends React.Component {
   }
 }
 
-export default connect(state => state, { performSearch }) (MainPage);
+export default connect(state => ({cities: state.cities}), { performSearch, setToken, fetchCities, selectCity }) (MainPage);

@@ -6,8 +6,7 @@ import { LInput } from './LInput';
 import { HCenter, VCenter } from './Center';
 import { ListingGrid } from './ListingGrid';
 import { LabeledDropdown } from './LabeledDropdown';
-
-
+import { NavLinks } from './NavLinks';
 export {
     HCenter,
     VCenter,
@@ -18,4 +17,5 @@ export {
     ResultList,
     MainTopBar,
     LInput,
+    NavLinks,
 };

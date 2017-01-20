@@ -64,6 +64,17 @@ const CLListingsHitResult = new GraphQLObjectType({
   })
 });
 
+const CityCoordinates = new GraphQLObjectType({
+  name: 'CityCoordinates',
+  description: 'Latitude and longitude for a city',
+  fields: () => ({
+    cityName: {type: GraphQLString},
+    state: {type: GraphQLString},
+    lat: {type: GraphQLFloat},
+    long: {type: GraphQLFloat},
+  })
+});
+
 const Query = new GraphQLObjectType({
   name: 'Query',
   description: 'Root query for graphql endpoint',
@@ -119,6 +130,33 @@ const Query = new GraphQLObjectType({
         return listingsHitResult;
       }
     },
+
+    cities: {
+      type: new GraphQLList(CityCoordinates),
+      description: 'Returns all suported cities',
+      args: {},
+      resolve: _ => [
+        {
+          cityName: 'San Francisco',
+          state: 'CA',
+          lat: 37.783591,
+          long: -122.408949,
+        },
+        {
+          cityName: 'New York',
+          state: 'NY',
+          lat: 40.731815,
+          long: -73.992933,
+        },
+        {
+          cityName: 'Chicago',
+          state: 'IL',
+          lat: 41.872881,
+          long: -87.665966,
+        }
+      ]
+    },
+
     amazon: {
       type: new GraphQLList(GraphQLString),
       description: 'List of amazon products',

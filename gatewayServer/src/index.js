@@ -19,4 +19,4 @@ app.use('/graphql', graphqlHTTP({
   graphiql: true
 }));
 
-app.listen(config.PORT, config.ADDRESS, () => console.log('Gateway listening on *:' + config.PORT));
+app.listen(config.PORT, config.ADDRESS, () => console.log(`Gateway listening on ${config.ADDRESS}:${config.PORT}`));

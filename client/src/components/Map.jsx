@@ -49,9 +49,7 @@ export class Map extends React.Component {
     const markers = this.getMarkers();
     return (
       <div style={{ height: '100%' }}>
-        <Helmet
-          title="Getting Started"
-        />
+        <Helmet title="Results" />
         <ShowMap
           containerElement={
             <div className="map" style={{ width: '100%', height: '100%' }} />
