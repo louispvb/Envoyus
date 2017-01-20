@@ -1,15 +1,20 @@
 var fs = require('fs');
 var PythonShell = require('python-shell');
 var Promise = require('bluebird');
+var argv = require('yargs').argv;
 
 var pyrun = Promise.promisify(PythonShell.run);
 // see link
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
 
+let convertNumber = x => {
+  let numberTry = Number(x)
+  return Number.isNaN(numberTry) ? null : numberTry;
+}
+
 var specWeCareAbout = ['Processor', 'Hard Drive', 'RAM', 'Graphics', 'Screen Size', 'Year']
 var relevantSpec = (spec)=> (specWeCareAbout.includes(spec))
 var machineLearnListing = async function(inputStr) {
-  // var listing = "\n         \n13\" MacBook Pro  \n2.5 GHz Core i5 (Mid 2012) Processor  \n500 GB Hard Drive  \n4 GB Ram  \nAlmost perfect condition. No scratches, dents or blemishes. Has had overlay case and screen protector since day one. Comes with original box and power supply.    "
   var pyoptions = {
     mode: 'text',
     pythonPath: '/usr/local/bin/python3',
@@ -21,6 +26,8 @@ var machineLearnListing = async function(inputStr) {
   } catch (err) {
     console.error(err);
   }
+
+  if (!results) return;
 
   results = results.map(spec=>JSON.parse(spec))
   var specObj = results.reduce((accumulator, current)=>{
@@ -57,33 +64,36 @@ var machineLearnListing = async function(inputStr) {
   }
   return specObj
 }
-
-var json = fs.readFileSync('../craigslistService/macbook-sfbay-test.json');
+var json = fs.readFileSync(argv.in);
 json = JSON.parse(json.toString());
 (async () => {
   let length = json.length
-  let result = '';
   let progress = 0
   for (let i = 0; i < length; i++) {
     let listing = json[i];
     let output = await machineLearnListing(listing.description)
     // console.log(output)
     listing.specs = output
+    if (!output) continue;
     listing.condition = output.condition
-    console.log(listing.condition)
-    let str = JSON.stringify({ "index": { "_index": "cl", "_type": "listing" }}) + '\n' + JSON.stringify(listing);
-    result += str + '\n'
+
+    listing.price = convertNumber(listing.price);
+    let lat = convertNumber(listing.lat);
+    let lon = convertNumber(listing.lng);
+    delete listing.lat;
+    delete listing.lng;
+    listing.location = { lat, lon }
+    // console.log(listing.condition)
+    let str = JSON.stringify({ "index": { "_index": "cl", "_type": "listing" }}) + '\n' + JSON.stringify(listing) + '\n';
+    console.log(`Processed ${i}`);
+    fs.appendFileSync(argv.out, str);
     let completionPercent = Math.floor(i / length * 100)
     if (completionPercent > progress) {
       console.log(completionPercent, "% Done");
       progress = completionPercent;
     }
   }
-  return result;
-})().then(finalResult => {
-  fs.writeFileSync('finalMacBookProSF_test.json', finalResult)
-})
-
+})()
 // var newjson = json.map((listing, i) => {
 //   return machineLearnListing(listing.description).then(output => {
 
