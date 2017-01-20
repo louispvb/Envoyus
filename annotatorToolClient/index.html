@@ -182,6 +182,11 @@
       </div>
     </div>
     <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
+      <div>
+        ${['Hard Drive','Processor','RAM','Graphics','Screen Size', 'Year'].map(x => `<button type="button" class="btn btn-secondary" onclick="addAnnotation('${x}')"> ${x}</button><br />`).join('')}
+      </div>
+    </div>
+    <div class="btn-toolbar" role="toolbar" aria-label="Toolbar with button groups">
       <div class="btn-group mr-2" role="group" aria-label="First group">
         ${[-1,-2,-3,-4,-5].map(x => `<button type="button" class="btn btn-secondary negative" onclick="addAnnotation(${x})"> ${x}</button>`).join('')}
       </div>
