@@ -3,6 +3,7 @@ const BASE_PORT = 3000;
 module.exports = {
   APP_NAME: 'envoyus',
   DOMAIN: 'envoyus.co',
+  LOGIN_GATEWAY: 'http://login.envoyus.co/auth/facebook',
   
   GATEWAY_SERVER: {
     PORT: process.env.PORT || (process.env.NODE_ENV === 'production' ? 80 : BASE_PORT),

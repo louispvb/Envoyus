@@ -11,7 +11,7 @@ const auth = express.Router();
 const db = mongoose.connection;
 const config = require('../../config/config').LOGIN_SERVICE;
 const KEYS = require('../../config/config.privatekeys.js');
-
+const DOMAIN = require('../../config/config').DOMAIN;
 
 mongoose.connect(config.DB_URI);
 
@@ -32,13 +32,17 @@ const User = mongoose.model('User', UserSchema);
 passport.use(new FacebookStrategy(Object.assign(KEYS.facebookAuth, {profileFields: ['id', 'email', 'name']}),
   async (token, refreshToken, profile, done) => {
     let user;
+    let tokenObj;
     try {
       user = await User.findOne({'facebook.id': profile.id}).exec();
     } catch (err) { console.error('Error occured searching for user'); done(err); }
-
+    
     if (user) {
-      user = user.toObject();
-      user.token = jwt.sign({name: user.name, id: user.id}, KEYS.JWT_SECRET);
+      user = user.toObject().facebook;
+      tokenObj = {name: user.name, id: user.id, email: user.email};
+      user.token = jwt.sign(tokenObj, KEYS.JWT_SECRET);
+      // console.log('OLD, TOKEN OBJ', tokenObj, 'TOKEN ', user.token, 'USER', user);
+      
       return done(null, user);
     }
 
@@ -57,9 +61,10 @@ passport.use(new FacebookStrategy(Object.assign(KEYS.facebookAuth, {profileField
       done(err);
     }
 
-    user = user.toObject();
-    user.token = jwt.sign({name: user.name, id: user.id, email: user.email}, KEYS.JWT_SECRET);
-
+    user = user.toObject().facebook;
+    tokenObj = {name: user.name, id: user.id, email: user.email};
+    user.token = jwt.sign(tokenObj, KEYS.JWT_SECRET);
+    // console.log('TOKEN OBJ', tokenObj, 'TOKEN ', user.token, 'USER', user);
     done(null, user);
   }));
 
@@ -79,14 +84,12 @@ auth.route('/facebook/callback')
       failureRedirect: '/auth/fail'
     }),
     (req, res) => {
+      const redirAddr = 'http://' + DOMAIN;
       res.cookie('token', req.user.token, {
-        domain: '.' + config.domain,
+        domain: DOMAIN,
         expires  : new Date(Date.now() + 1000 * 60 * 60 * 2),
         httpOnly : false
-      });
-      const redirAddr = 'http://' + require('../../config/config').DOMAIN;
-      console.log(redirAddr);
-      res.send(`<html><body><a href="${redirAddr}">Go Back</a></body></html>`);
+      }).send(`<html><body><p>Logged in!</p><a href="${redirAddr}">Go Back</a></body></html>`);;
     }
   );
 

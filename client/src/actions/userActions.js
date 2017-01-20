@@ -1,7 +1,8 @@
 import { GQL } from '../utils';
 
-import { SET_SEARCH_QUERY, SET_LISTINGS } from './actionTypes';
+import { SET_SEARCH_QUERY, SET_LISTINGS, SET_TOKEN } from './actionTypes';
 import { hashHistory } from 'react-router';
+const jwtDecode = require('jwt-decode');
 
 export const setSearchQuery = query => ({
   type: SET_SEARCH_QUERY,
@@ -11,6 +12,11 @@ export const setSearchQuery = query => ({
 export const setListings = listings => ({
   type: SET_LISTINGS,
   listings,
+})
+
+export const setToken = token => ({
+  type: SET_TOKEN,
+  token: jwtDecode(token),
 })
 
 export const performSearch = (query, size = 10, from = 0, navigate = true) => dispatch => {

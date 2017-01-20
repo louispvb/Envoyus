@@ -33,6 +33,15 @@ $light-border: 1px solid #efefef;
   color: $text-color;
 }
 
+.profile-small {
+  width: 30px;
+  height: 30px;
+  border-radius: 100%;
+  border: 2px solid lightgrey;
+  margin-right: 3px;
+  background-size: contain;
+}
+
 .main-top-bar {
   background-color: white;
   border-bottom: $hard-border;
@@ -198,6 +207,12 @@ $light-border: 1px solid #efefef;
   text-align: right;
   margin: 20px 30px 20px 30px;
   font-size: 14px;
+  display: flex;
+}
+
+.name-link {
+  color: $text-color;
+  padding-top: 5px;
 }
 
 .splash-intro-text {
