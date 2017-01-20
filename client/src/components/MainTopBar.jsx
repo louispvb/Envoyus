@@ -17,5 +17,3 @@ export const MainTopBar = props => (
     { props.children }
   </div>
 );
-
-//    <NavLinksCtn navLinkClass='nav-links2-ctn' navLinkCtnClass='top-bar-nav-ctn' />

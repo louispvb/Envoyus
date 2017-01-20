@@ -153,6 +153,12 @@ const Query = new GraphQLObjectType({
           state: 'IL',
           lat: 41.872881,
           long: -87.665966,
+        },
+        {
+          cityName: 'Phoenix',
+          state: 'AZ',
+          lat: 33.479618,
+          long: -112.091034,
         }
       ]
     },
