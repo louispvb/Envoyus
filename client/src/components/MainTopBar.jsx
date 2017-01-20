@@ -14,16 +14,8 @@ export const MainTopBar = props => (
         activeClass='input-ctn-active-style'
         onSubmit={ props.onSubmit } />
     </div>
-    <div className='top-bar-nav-ctn'>
-      <div className='nav-links2-ctn'>
-        About
-      </div>
-      <div className='nav-links2-ctn'>
-        Sign Up
-      </div>
-      <div className='nav-links2-ctn'>
-        Login
-      </div>
-    </div>
+    { props.children }
   </div>
 );
+
+//    <NavLinksCtn navLinkClass='nav-links2-ctn' navLinkCtnClass='top-bar-nav-ctn' />

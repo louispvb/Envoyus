@@ -5,26 +5,10 @@ import { connect } from 'react-redux';
 import { hashHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
 
-import { performSearch, setToken } from '../actions/userActions';
+import { performSearch, setToken, fetchCities, selectCity } from '../actions/userActions';
 
 import { HCenter, ListingGrid, LabeledDropdown, LInput  } from '../components';
-import { LOGIN_GATEWAY } from '../../../config/config';
-
-const NavLinks = props => (
-  <header className='splash-nav'>
-    <div className='nav-links-ctn'>
-      About
-    </div>
-    <div className='nav-links-ctn'>
-      {props.id ? <div className='profile-small' style={{
-        backgroundImage: `url('http://graph.facebook.com/${props.id}/picture?type=square')`,
-      }} /> : null}
-      {props.id ? <a href='#' className='name-link'>{ props.name }</a>: <a href={ LOGIN_GATEWAY }>Login</a>}
-    </div>
-  </header>
-)
-
-const NavLinksCtn = connect(state => state.token) (NavLinks);
+import { NavLinksCtn } from '../containers';
 
 class MainPage extends React.Component {
   constructor(props) {
@@ -38,9 +22,9 @@ class MainPage extends React.Component {
     let token = null;
     if (document.cookie) {
       token = document.cookie.split('=')[1]
+      this.props.setToken(token);
     }
-    console.log('TOKEN', token);
-    this.props.setToken(token);
+    this.props.fetchCities();
   }
 
   onSearch() {
@@ -51,7 +35,7 @@ class MainPage extends React.Component {
     return (
       <div className='splash-ctn'>
         <div className='splash-panel'>
-          <NavLinksCtn />
+          <NavLinksCtn navLinkClass='nav-links-ctn' navLinkCtnClass='splash-nav' />
           <HCenter className='splash-image-ctn'>
             <div className='splash-content-ctn'>
               <div className='splash-intro-text'>
@@ -89,6 +73,8 @@ class MainPage extends React.Component {
                   <LabeledDropdown
                     label='City'
                     width='100%'
+                    listData={this.props.cities.map(city => city.cityName)}
+                    onSelect={this.props.selectCity}
                     activeClass='input-ctn-active-style' />
                 </div>
                 <div style={{
@@ -120,4 +106,4 @@ class MainPage extends React.Component {
   }
 }
 
-export default connect(state => state, { performSearch, setToken }) (MainPage);
+export default connect(state => ({cities: state.cities}), { performSearch, setToken, fetchCities, selectCity }) (MainPage);

@@ -28,6 +28,13 @@ $light-border: 1px solid #efefef;
   color: $greyed-color;
 }
 
+a {
+  color: $text-color;
+  &:hover {
+    text-decoration: none;
+  }  
+}
+
 @mixin top-bar-common() {
   padding: 13px 15px 0 15px;
   color: $text-color;
@@ -40,6 +47,11 @@ $light-border: 1px solid #efefef;
   border: 2px solid lightgrey;
   margin-right: 3px;
   background-size: contain;
+  margin-top: -4px;
+}
+
+.name-link {
+  margin-top: -4px;
 }
 
 .main-top-bar {
@@ -70,6 +82,7 @@ $light-border: 1px solid #efefef;
 
 .top-bar-nav-ctn {
   @include top-bar-common();
+  padding-top: 16px;
   flex: 1;
   display: flex;
   flex-direction: row;
@@ -208,11 +221,6 @@ $light-border: 1px solid #efefef;
   margin: 20px 30px 20px 30px;
   font-size: 14px;
   display: flex;
-}
-
-.name-link {
-  color: $text-color;
-  padding-top: 5px;
 }
 
 .splash-intro-text {
