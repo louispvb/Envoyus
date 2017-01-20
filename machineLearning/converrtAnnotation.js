@@ -13,7 +13,7 @@ var testPost = [{"end": 2, "begin": 0, "sentence": [["MacBook", "NNP"], ["Pro", 
 var sentenceObj1 = {"end": 3, "begin": 3, "sentence": [["Retina", "NNP"], ["display", "NN"], [":", ":"], ["13.3-inch", "JJ"], ["(", "("], ["diagonal", "JJ"], [")", ")"], ["LED-backlit", "JJ"], ["display", "NN"], ["with", "IN"], ["IPS", "NNP"], ["technology", "NN"], [";", ":"], ["2560-by-1600", "JJ"], ["resolution", "NN"], ["at", "IN"], [227, "CD"], ["pixels", "NNS"], ["per", "IN"], ["inch", "NN"], ["with", "IN"], ["support", "NN"], ["for", "IN"], ["millions", "NNS"], ["of", "IN"], ["colors", "NNS"], [".", "."]], "value": 0, "words": [["13.3-inch", "JJ"]]}
 var sentenceObj2 = {"end": 8, "begin": 7, "sentence": [["Retina", "NNP"], ["display", "NN"], [":", ":"], ["13.3-inch", "JJ"], ["(", "("], ["diagonal", "JJ"], [")", ")"], ["LED-backlit", "JJ"], ["display", "NN"], ["with", "IN"], ["IPS", "NNP"], ["technology", "NN"], [";", ":"], ["2560-by-1600", "JJ"], ["resolution", "NN"], ["at", "IN"], [227, "CD"], ["pixels", "NNS"], ["per", "IN"], ["inch", "NN"], ["with", "IN"], ["support", "NN"], ["for", "IN"], ["millions", "NNS"], ["of", "IN"], ["colors", "NNS"], [".", "."]], "value": 0, "words": [["LED-backlit", "JJ"], ["display", "NN"]]}
 var lineReader = require('readline').createInterface({
-  input: require('fs').createReadStream('./learningData/annotations.json')
+  input: require('fs').createReadStream('./annotations_2.json')
 });
 
 var rlp = require('readline-promise');
@@ -45,13 +45,13 @@ var convertSentenceToIOB = (sentenceObj) => {
     var tuple = [];
     tuple = wordArray.slice();
     if (index === sentenceObj.begin) {
-      if (sentenceObj.value === 0) {
+      if (Number.isNaN(Number(sentenceObj.value))) {
         tuple[2] = 'B-CK'
       } else {
         tuple[2] = 'B-CO'
       }
     } else if(index > sentenceObj.begin && index <= sentenceObj.end) {
-      if (sentenceObj.value === 0) {
+      if (Number.isNaN(Number(sentenceObj.value))) {
         tuple[2] = 'I-CK'
       } else {
         tuple[2] = 'I-CO'
@@ -63,7 +63,7 @@ var convertSentenceToIOB = (sentenceObj) => {
   })
 }
 
-var convertSentenceToConditionData = (sentenceObj) => {
+var convertSentenceToData = (sentenceObj) => {
   condition_words = sentenceObj.sentence.slice(sentenceObj.begin, sentenceObj.end+1).map(word=>word[0]).join(' ');
   var output = {};
   output[(sentenceObj.value).toString()] = condition_words;
@@ -128,8 +128,18 @@ var processPostIOB = (post) => {
 var processPostConditionData = (post) => {
   var conditionArray = [];
   for (var i = 0; i < post.length; i++) {
-    if (post[i].value !== 0) {
-      conditionArray.push(convertSentenceToConditionData(post[i]));
+    if (!Number.isNaN(Number(post[i].value))) {
+      conditionArray.push(convertSentenceToData(post[i]));
+    }
+  }
+  return conditionArray
+}
+
+var processPostSpecData = (post) => {
+  var conditionArray = [];
+  for (var i = 0; i < post.length; i++) {
+    if (Number.isNaN(Number(post[i].value))) {
+      conditionArray.push(convertSentenceToData(post[i]));
     }
   }
   return conditionArray
@@ -145,7 +155,7 @@ var processPostConditionData = (post) => {
 var allLine = [];
 
 rlp.createInterface({
-    input: fs.createReadStream('./learningData/annotations.json')
+    input: fs.createReadStream('./annotations_2.json')
 })
 .each(function(line) {
   var post = JSON.parse(line);
@@ -153,22 +163,25 @@ rlp.createInterface({
   //allLine.push[JSON.parse(line)];
 })
 .then(function() {
-  console.log(allLine, 'all the text')
+  // console.log(allLine, 'all the text')
   var data = allLine.map(post=>processPostIOB(post))
   var data = [].concat.apply([], data);
   var conditionData = allLine.map(post=>processPostConditionData(post));
   var conditionData = [].concat.apply([], conditionData);
-  console.log(data.length);
+  var specData = allLine.map(post=>processPostSpecData(post))
+  var specData = [].concat.apply([], specData)
+  console.log(data);
   console.log(conditionData);
-  fs.writeFile ('./annotationIOB.txt', JSON.stringify(data), function(err) {
+  console.log(specData);
+  fs.writeFileSync ('./annotationIOB2.txt', JSON.stringify(data), function(err) {
     if (err) throw err;
     console.log('complete');
   });
-  fs.writeFileSync ('./annotationIOB.txt', JSON.stringify(data), function(err) {
+  fs.writeFileSync ('./conditionTraining2.json', JSON.stringify(conditionData), function(err) {
     if (err) throw err;
     console.log('complete');
   });
-  fs.writeFileSync ('./conditionTraining.json', JSON.stringify(conditionData), function(err) {
+  fs.writeFileSync ('./specTraining2.json', JSON.stringify(specData), function(err) {
     if (err) throw err;
     console.log('complete');
   });
