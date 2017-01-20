@@ -6,7 +6,7 @@ var pyrun = Promise.promisify(PythonShell.run);
 // see link
 // https://www.elastic.co/guide/en/elasticsearch/reference/current/docs-bulk.html
 
-var specWeCareAbout = ['Processor', 'Hard Drive', 'RAM', 'Graphics', 'Screen Size']
+var specWeCareAbout = ['Processor', 'Hard Drive', 'RAM', 'Graphics', 'Screen Size', 'Year']
 var relevantSpec = (spec)=> (specWeCareAbout.includes(spec))
 var machineLearnListing = async function(inputStr) {
   // var listing = "\n         \n13\" MacBook Pro  \n2.5 GHz Core i5 (Mid 2012) Processor  \n500 GB Hard Drive  \n4 GB Ram  \nAlmost perfect condition. No scratches, dents or blemishes. Has had overlay case and screen protector since day one. Comes with original box and power supply.    "

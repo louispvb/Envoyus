@@ -31,6 +31,18 @@ def convertArrayCk(tree):
             listing.append(' '.join(word))
     return listing
 
+def convertArrayCo(tree):
+    listing = []
+    for subtree in tree.subtrees():
+        if subtree.label()=="CO":
+            # print(subtree.leaves())
+            word = []
+            for leaf in subtree.leaves():
+                word.append(leaf[0])
+            listing.append(' '.join(word))
+    return listing
+
+
 ########################################################################
 def disambiguation(test_str):
     # download stopwords
