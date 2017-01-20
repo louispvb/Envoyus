@@ -75,10 +75,10 @@ def parseContainer():
         return clChunker
     else:
         # print('Training new chunking...')
-        chunk = get_training_data('learningData/annotationIOB.txt')
+        chunk = get_training_data('./annotationIOB2.txt')
         random.shuffle(chunk)
-        train_sents = chunk[:400];
-        test_sents = chunk[400:]
+        train_sents = chunk
+        # test_sents = chunk[400:]
         clChunker = CraigListWordChunker(train_sents)
         f = open('keyword_chunking.pkl', 'wb')
         pickle.dump(clChunker, f)
@@ -137,7 +137,8 @@ def train_spec_classifier(filename):
 
     random.shuffle(filtered_specs)
     featuresets = [(spec_features(s), label) for (s, label) in filtered_specs]
-    train_set, test_set = featuresets[:], featuresets[1200:]
+    # train_set, test_set = featuresets[:], featuresets[1200:]
+    train_set, test_set = featuresets, featuresets[1200:]    
     nb_classifier = NaiveBayesClassifier.train(train_set)
     def classifier(s):
         prob_dist = nb_classifier.prob_classify(spec_features(s))
@@ -156,7 +157,7 @@ def spec_classifier(s):
         return classifier(s)
     else:
         print('Training new spec classifier...')
-        classifier = train_spec_classifier('./learningData/mbp.json')
+        classifier = train_spec_classifier('./specTraining2.json')
         f = open('spec_classifier.pkl', 'wb')
         pickle.dump(classifier, f)
         f.close()
@@ -171,7 +172,7 @@ def condition_classifier(s):
         return conditionClassifier(s)
     else:
         print('Training new condition classifier...')
-        conditionClassifier = train_spec_classifier('./conditionTraining.json')
+        conditionClassifier = train_spec_classifier('./conditionTraining2.json')
         f = open('condition_classifier.pkl', 'wb')
         pickle.dump(conditionClassifier, f)
         f.close()

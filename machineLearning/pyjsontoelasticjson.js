@@ -26,13 +26,11 @@ var machineLearnListing = async function(inputStr) {
   } catch (err) {
     console.error(err);
   }
-
   if (!results) return;
-
   results = results.map(spec=>JSON.parse(spec))
   var specObj = results.reduce((accumulator, current)=>{
     current[1].forEach(spec=>{
-      if (relevantSpec(spec[0]) && spec[1] > 0.8) {
+      if (relevantSpec(spec[0]) && spec[1] > 0.94) {
         if(!accumulator.hasOwnProperty(spec[0])) {
           accumulator[spec[0]] = []
         } 
@@ -62,6 +60,7 @@ var machineLearnListing = async function(inputStr) {
   if (conditionCounter === 0) {
     specObj.condition = 'Unavailable'
   }
+  console.log('specObj:', specObj)
   return specObj
 }
 var json = fs.readFileSync(argv.in);
