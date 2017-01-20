@@ -1,24 +1,30 @@
-import fixtures from './fixtures';
+import fixtures from '../fixtures';
 
 import React from 'react';
+import { connect } from 'react-redux';
 import { Button } from 'react-bootstrap';
-import { ListingGrid } from './containers';
-import { MainTopBar } from './components';
-import { Map } from './components/index.jsx';
+import Slider from 'rc-slider';
 
-require('style-loader!css-loader!rc-slider/assets/index.css');
-const Slider = require('rc-slider');
+import { performSearch } from '../actions/userActions';
 
-export default class ResultsPage extends React.Component {
+import { MainTopBar, ListingGrid, Map } from '../components';
+import { MainTopBarCtn, ListingGridCtn } from '../containers';
+import 'style-loader!css-loader!rc-slider/assets/index.css';
+
+class ResultsPage extends React.Component {
   constructor(props) {
     super(props);
 
+  }
+
+  componentWillMount() {
+    this.props.performSearch(this.props.params.query, 10, 0, false);
   }
   
   render() {
     return (
       <div className='results-page'>
-        <MainTopBar />
+      <MainTopBarCtn placeholder={ this.props.params.query || 'Search' } />
         <div className='split-pane-horiz'>
           <div className='results-ctn'>
             <div className='search-settings-ctn'>
@@ -42,9 +48,8 @@ export default class ResultsPage extends React.Component {
               </div>
             </div>
             <div className='search-results'>
-              <ListingGrid 
+              <ListingGridCtn 
                 height='400px' 
-                listData={fixtures.listData}
                 columns={2} />
             </div>
           </div>
@@ -62,3 +67,5 @@ export default class ResultsPage extends React.Component {
     );
   }
 }
+
+export default connect(state => state, { performSearch }) (ResultsPage);
