@@ -80,27 +80,23 @@ auth.route('/facebook/callback')
     }),
     (req, res) => {
       res.cookie('token', req.user.token, {
+        domain: '.' + config.domain,
         expires  : new Date(Date.now() + 1000 * 60 * 60 * 2),
         httpOnly : false
       });
-      //res.send('<script>window.localStorage.token="userToken"; console.log("token working")</script>')
-      // res.redirect('/auth/success');
-      res.redirect( 'http://localhost:3000/?token='+req.user.token );
-      //res.redirect( 'http://localhost:3000/');
-
+      const redirAddr = 'http://' + require('../../config/config').DOMAIN;
+      console.log(redirAddr);
+      res.send(`<html><body><a href="${redirAddr}">Go Back</a></body></html>`);
     }
   );
 
 auth.get('/fail', (req, res) => res.send('Login Fail') );
-// auth.get('/success', (req, res) => res.redirect('http://localhost:3000/')); // my line
 auth.get('/success', (req, res, next) => { 
-  //insert local storage here!!!!!<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
    console.log('Login Success');
   next()
   },
   (req, res) => {
   }
 );
-// auth.get('/success', (req, res) => res.send('Login Success')); // louis
 
-app.listen(config.PORT, config.ADDRESS, () => console.log( 'Login Service listening on *:' + config.PORT ) );
+app.listen(config.PORT, config.ADDRESS, () => console.log( `Login Service listening on ${config.ADDRESS}:${config.PORT}`) );
