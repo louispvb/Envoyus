@@ -5,8 +5,6 @@ from nltk import download
 from nltk.corpus import stopwords
 from nltk.tokenize import wordpunct_tokenize
 
-
-
 def conll_tag_chunks(chunk_sents):
     tag_sents = [nltk.chunk.tree2conlltags(tree) for tree in chunk_sents]
     return [[[w, t, c] for (w, t, c) in chunk_tags] for chunk_tags in tag_sents]
@@ -50,26 +48,7 @@ def file_exists(path):
 def get_training_data(product):
     with open('./learningData/' + product + '.json') as data_file:
         return json.load(data_file)
-
-def spec_classifier(s):
-    if file_exists('spec_classifier.pkl'):
-        # print('Loading spec classifier from pickle')
-        f = open('spec_classifier.pkl', 'rb')
-        classifier = pickle.load(f)
-        f.close()
-        return classifier(s)
-    else:
-        print('Training new spec classifier...')
-        classifier = train_spec_classifier()
-        f = open('spec_classifier.pkl', 'wb')
-        pickle.dump(classifier, f)
-        f.close()
-        return classifier(s)
-
-def processPosting(postArr):
-    for phrase in postArr:
-        print(phrase, spec_classifier(phrase)[:2])
-
+        
 def get_training_data(filename):
     with open(filename) as data_file:
         return json.load(data_file)

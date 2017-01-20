@@ -1,0 +1,18 @@
+{
+  "private": true,
+  "engines": {
+    "node": ">=4.0.0"
+  },
+  "scripts": {
+    "start": "node server/basic-server.js",
+    "start:es6": "babel-node server/basic-server.js",
+    "test": "mocha server/spec",
+    "test:es6": "mocha --compilers js:babel-register server/spec",
+    "lint": "eslint ./"
+  },
+  "devDependencies": {},
+  "dependencies": {
+    "child_process": "^1.0.2",
+    "python-shell": "^0.4.0"
+  }
+}
