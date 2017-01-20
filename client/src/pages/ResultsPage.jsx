@@ -62,7 +62,7 @@ class ResultsPage extends React.Component {
     return (
       <div className='results-page'>
         <MainTopBarCtn placeholder={ this.props.params.query || 'Search' }>
-          <NavLinksCtn navLinkClass='nav-links-ctn' navLinkCtnClass='top-bar-nav-ctn' />
+          <NavLinksCtn navLinkClass='nav-links2-ctn' navLinkCtnClass='top-bar-nav-ctn' />
         </MainTopBarCtn>
         <div className='split-pane-horiz'>
           <div className='results-ctn'>
