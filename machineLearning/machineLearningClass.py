@@ -9,12 +9,11 @@ import os.path
 from pprint import pprint
 import nltk
 from nltk import sent_tokenize, word_tokenize, pos_tag
-
 import numpy
 import re
 from nltk.corpus import conll2000, stopwords
 from features import clchunk_features, spec_features
-from utility import disambiguation, convertArrayCk, file_exists, get_training_data
+from utility import disambiguation, convertArrayCk, file_exists, get_training_data, convertArrayCo
 #########################################################################
 class CraigListWordChunkTagger(nltk.TaggerI): # [_consec-chunk-tagger]
     def __init__(self, train_sents):
@@ -53,7 +52,7 @@ class CraigListWordChunker(nltk.ChunkParserI): # [_consec-chunker]
                         for sent in train_sents]
         self.tagger = CraigListWordChunkTagger(tagged_sents)
 
-    def parse(self, description, convertFn):
+    def parse(self, description, convertFn, convertFn2):
         sentences = parseDescription(description)
         totalTags = []
         for sentence in sentences:
@@ -62,7 +61,10 @@ class CraigListWordChunker(nltk.ChunkParserI): # [_consec-chunker]
             tagged_sents = self.tagger.tag(sentenceTokens)
             totalTags += tagged_sents
         conlltags = [(w,t,c) for ((w,t),c) in totalTags]
-        return convertFn(nltk.chunk.conlltags2tree(conlltags))
+        output = {}
+        output['chunk'] = convertFn(nltk.chunk.conlltags2tree(conlltags)) #convert tree to chunks
+        output['condition'] = convertFn2(nltk.chunk.conlltags2tree(conlltags)) #convert tree to conditions
+        return output
 
 def parseContainer():
     if file_exists('keyword_chunking.pkl'):
@@ -136,15 +138,7 @@ def train_spec_classifier(filename):
     random.shuffle(filtered_specs)
     featuresets = [(spec_features(s), label) for (s, label) in filtered_specs]
     train_set, test_set = featuresets[:], featuresets[1200:]
-
-
-
     nb_classifier = NaiveBayesClassifier.train(train_set)
-    # nb_classifier.classify(string)
-    # nb_classifier.prob_classify(string)
-    # print(classify.accuracy(nb_classifier, test_set))
-    # nb_classifier.show_most_informative_features(1)
-
     def classifier(s):
         prob_dist = nb_classifier.prob_classify(spec_features(s))
         all_prob = map(lambda sample: (sample, prob_dist.prob(sample)), prob_dist.samples())
@@ -155,7 +149,7 @@ def train_spec_classifier(filename):
 
 def spec_classifier(s):
     if file_exists('spec_classifier.pkl'):
-        # print('Loading spec classifier from pickle')
+        # print('Loading spec classifier from pickle')ffffffffffffffffffffffffffffffffffffffffffff
         f = open('spec_classifier.pkl', 'rb')
         classifier = pickle.load(f)
         f.close()
@@ -167,6 +161,22 @@ def spec_classifier(s):
         pickle.dump(classifier, f)
         f.close()
         return classifier(s)
+
+def condition_classifier(s):
+    if file_exists('condition_classifier.pkl'):
+        # print('Loading spec classifier from pickle')ffffffffffffffffffffffffffffffffffffffffffff
+        f = open('condition_classifier.pkl', 'rb')
+        conditionClassifier = pickle.load(f)
+        f.close()
+        return conditionClassifier(s)
+    else:
+        print('Training new condition classifier...')
+        conditionClassifier = train_spec_classifier('./conditionTraining.json')
+        f = open('condition_classifier.pkl', 'wb')
+        pickle.dump(conditionClassifier, f)
+        f.close()
+        return conditionClassifier(s)
+
 
 # CLASSIFIERS
 
