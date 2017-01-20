@@ -17,6 +17,30 @@ const {
   GraphQLFloat
 } = require('graphql');
 
+const Coords = new GraphQLObjectType({
+  name: 'Coords',
+  description: 'Latitude and Longitude',
+  fields: () => ({
+    lat: {type: GraphQLFloat},
+    lon: {type: GraphQLFloat}
+  })
+})
+
+const Spec = new GraphQLObjectType({
+  name: 'Spec',
+  description: 'Spec fields for computers',
+  fields: () => ({
+    condition: { type: GraphQLInt },
+    screenSize: { type: new GraphQLList(GraphQLString) },
+    year: { type: new GraphQLList(GraphQLString) },
+    processor: { type: new GraphQLList(GraphQLString) },
+    screenSize: { type: new GraphQLList(GraphQLString) },
+    RAM: { type: new GraphQLList(GraphQLString) },
+    hardDrive: { type: new GraphQLList(GraphQLString) },
+    graphics: { type: new GraphQLList(GraphQLString) },
+  })
+});
+
 const CLListingType = new GraphQLObjectType({
   name: 'Listing',
   description: 'A representation of elastic search listing',
@@ -25,12 +49,12 @@ const CLListingType = new GraphQLObjectType({
     postDate: { type: GraphQLString },
     postingUrl: { type: GraphQLString },
     title: { type: GraphQLString },
-    price: { type: GraphQLString },
+    price: { type: GraphQLInt },
     cityName: { type: GraphQLString },
     imageUrls: { type: new GraphQLList(GraphQLString) }, //since it is an array you need to make it a constructo functioin for list and pass it graphqlstrings
     attributes: { type: new GraphQLList(GraphQLString) },
-    lat: { type: GraphQLString }, //*** may need to be string
-    long: { type: GraphQLString },
+    location: { type: Coords },
+    condition: { type: GraphQLInt },
     postId: { type: GraphQLString },
     postingUrl: { type: GraphQLString },
     postDate: { type: GraphQLString },
@@ -40,7 +64,7 @@ const CLListingType = new GraphQLObjectType({
     sellerName: { type: GraphQLString },
     sellerPhoneNumber: { type: GraphQLString },
     sellerEmail: { type: GraphQLString },
-    specs: { type: new GraphQLList(GraphQLString) },
+    specs: { type: Spec },
     description: { type: GraphQLString },
   })
 });
@@ -98,19 +122,44 @@ const Query = new GraphQLObjectType({
         from: {
           type: GraphQLInt,
           description: 'The starting point of the results to return'
+        },
+        priceRange: {
+          type: new GraphQLList(GraphQLInt),
+          description: 'Price range',
+        },
+        conditionRange: {
+          type: new GraphQLList(GraphQLInt),
+          description: 'Condition Range (0-5)',
         }
       },
       resolve: async (_, args) => {
         let request;
         try {
-          let matchObj = {};
-          if (args.query) matchObj['title'] = args.query;
-          if (args.descQuery) matchObj['description'] = args.descQuery;
+          let should = [];
+          if (args.query) should.push({"match": {"title": args.query}});
+          if (args.descQuery) should.push({"match": {"description": args.query}});
+          let must = [
+            {"exists": {"field": "imageUrls"}},
+            {"exists": {"field": "location.lat"}},
+            {"exists": {"field": "location.lon"}},
+            {"exists": {"field": "price"}},
+          ];
+          if (args.conditionRange && args.conditionRange.length === 2) {
+            must.push({"range": {"condition": {"from": args.conditionRange[0], "to": args.conditionRange[1]}}})
+          }
+          if (args.priceRange && args.priceRange.length === 2) {
+            must.push({"range": {"price": {"from": args.priceRange[0], "to": args.priceRange[1]}}})
+          }
           let postReq = {
             'query': {
-              'match': matchObj
+              'bool': {
+                should,
+                must,
+                'minimum_should_match': '60%',
+              }
             }
           };
+
           if (args.size) { postReq.size = args.size; }
           if (args.from) { postReq.from = args.from; }
 
@@ -119,6 +168,14 @@ const Query = new GraphQLObjectType({
           console.error('NonFatal: ' + error);
         }
         let results = request.data.hits.hits.map(listing => listing._source);
+        results.map(listing => {
+          listing.specs.screenSize = listing.specs['Screen Size'];
+          listing.specs.year = listing.specs['Year'];
+          listing.specs.processor = listing.specs['Processor'];
+          listing.specs.hardDrive = listing.specs['Hard Drive'];
+          listing.specs.graphics = listing.specs['Graphics'];
+          return listing;
+        });
         let listingsHitResult = {
           metaData: {
             total: request.data.hits.total,

@@ -17,3 +17,4 @@ export const MainTopBar = props => (
     { props.children }
   </div>
 );
+

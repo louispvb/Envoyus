@@ -1,22 +1,11 @@
 import React from 'react';
-import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk'
-import createLogger from 'redux-logger'
 import { Provider } from 'react-redux';
 import { Router, Route, Link, IndexRoute, hashHistory } from 'react-router';
 
 import MainPage from './pages/MainPage';
 import ResultsPage from './pages/ResultsPage';
 import { HCenter } from './containers';
-import userReducer from './reducers/userReducer';
-
-const store = createStore(
-  userReducer,
-  applyMiddleware(
-    thunkMiddleware,
-    createLogger()
-  )
-);
+import store from './store';
 
 const NoMatch = _ => (
   <HCenter style={{
@@ -48,5 +37,6 @@ const RouterView = (
     </Router>
   </Provider>
 );
+
 
 export default RouterView;

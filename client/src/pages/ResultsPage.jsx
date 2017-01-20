@@ -52,7 +52,7 @@ class ResultsPage extends React.Component {
   }
 
   componentWillMount() {
-    this.props.performSearch(this.props.params.query, 10, 0, false);
+    this.props.performSearch(this.props.params.query, 10, 0, [-3,3], [0,1500], false);
   }
   
   render() {
