@@ -58,8 +58,7 @@ export class ListingItem extends React.Component {
         height: this.props.height,
       }}> 
         <div style={Object.assign(imageStyle, conditionalStyle2)} 
-        onMouseEnter={this.toggleShow}
-        onMouseLeave={this.toggleShow}/>
+        onClick={this.toggleShow}/>
           <div><span className='list-item-price'>{this.props.data.price ? '$' + this.props.data.price : ''}</span> <span className='list-item-title'>{this.props.data.title}</span>
           {this.state.show ?
             <div style={infoStyle}>
