@@ -1,13 +1,9 @@
-import fixtures from '../fixtures';
-
 import React from 'react';
 import { connect } from 'react-redux';
-import { hashHistory } from 'react-router';
 import { Button } from 'react-bootstrap';
-
+import fixtures from '../fixtures';
 import { performSearch, setToken, fetchCities, selectCity } from '../actions/userActions';
-
-import { HCenter, ListingGrid, LabeledDropdown, LInput  } from '../components';
+import { HCenter, ListingGrid, LabeledDropdown, LInput } from '../components';
 import { NavLinksCtn } from '../containers';
 
 class MainPage extends React.Component {
@@ -39,14 +35,14 @@ class MainPage extends React.Component {
           <HCenter className='splash-image-ctn'>
             <div className='splash-content-ctn'>
               <div className='splash-intro-text'>
-                <span style={{fontSize: 48, fontWeight: 800, color: '#555'}}>Envoyus</span>
+                <span style={{ fontSize: 48, fontWeight: 800, color: '#555' }}>Envoyus</span>
                 <br />
                 <br />
-                <span style={{fontSize: 42, fontWeight: 600, color: '#555'}}>
+                <span style={{ fontSize: 42, fontWeight: 600, color: '#555' }}>
                   Your new product search.
                 </span>
                 <br />
-                <span style={{fontSize: 18, color: '#555'}}>
+                <span style={{ fontSize: 18, color: '#555' }}>
                   Thousands of curated listings, with one click
                 </span>
               </div>
@@ -55,35 +51,35 @@ class MainPage extends React.Component {
                   width: '65%',
                   borderRight: '1px solid #ccc',
                   padding: '15px 15px 0 15px',
-                  height: '100%',
+                  height: '100%'
                 }}>
-                  <LInput 
-                    label='Search' 
-                    placeholder='Macbook Pro' 
+                  <LInput
+                    label='Search'
+                    placeholder='Macbook Pro'
                     width='100%'
                     activeClass='input-ctn-active-style'
-                    onChange={ searchText => this.setState({searchText}) }
+                    onChange={ searchText => this.setState({ searchText }) }
                     onSubmit={ this.onSearch } />
                 </div>
                 <div style={{
                   width: '14%',
                   padding: '15px 0 0 15px',
-                  height: '100%',
+                  height: '100%'
                 }}>
                   <LabeledDropdown
                     label='City'
                     width='100%'
-                    listData={this.props.cities.map(city => city.cityName)}
-                    onSelect={this.props.selectCity}
+                    listData={ this.props.cities.map(city => city.cityName) }
+                    onSelect={ this.props.selectCity }
                     activeClass='input-ctn-active-style' />
                 </div>
                 <div style={{
                   width: '20%',
                   padding: '15px 0 0 15px',
-                  height: '100%',
+                  height: '100%'
                 }}>
-                  <Button 
-                    bsSize='lg' 
+                  <Button
+                    bsSize='lg'
                     bsClass='btn search-btn'
                     onClick={ this.onSearch }>Search</Button>
                 </div>
@@ -91,12 +87,12 @@ class MainPage extends React.Component {
             </div>
           </HCenter>
         </div>
-        
+
         <HCenter>
           <div className='splash-recommend'>
             <p className='subheader'>Recommended</p>
-            <ListingGrid 
-              height='320px' 
+            <ListingGrid
+              height='320px'
               listData={fixtures.listData}
               columns={3} />
           </div>
@@ -106,4 +102,15 @@ class MainPage extends React.Component {
   }
 }
 
-export default connect(state => ({cities: state.cities}), { performSearch, setToken, fetchCities, selectCity }) (MainPage);
+const T = React.PropTypes;
+MainPage.propTypes = {
+  selectCity: T.string,
+  cities: T.array,
+  setToken: T.func,
+  performSearch: T.func,
+  fetchCities: T.func
+};
+
+export default connect(state => ({
+  cities: state.cities
+}), { performSearch, setToken, fetchCities, selectCity })(MainPage);

@@ -1,6 +1,11 @@
 import React from 'react';
 
-export const HCenter = (props) => {
+/**
+* @function HCenter
+* @param  {type} props
+* @return {React.Component} {Horizontally centers children}
+*/
+export const HCenter = props => {
   const { style, ...restProps } = props;
   return (
     <div {...restProps} style={{
@@ -14,11 +19,15 @@ export const HCenter = (props) => {
   );
 };
 
-export const VCenter = (props) => (
+/**
+* @function VCenter
+* @return {React.Component} {Vertically centers children}
+*/
+export const VCenter = props => (
   <div {...props} style={{
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
+    justifyContent: 'center'
   }}>
     { props.children }
   </div>

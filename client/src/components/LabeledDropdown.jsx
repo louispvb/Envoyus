@@ -1,6 +1,7 @@
 import React from 'react';
 import { DropdownButton, MenuItem } from 'react-bootstrap';
 
+/** Component with an optionally labeled dropdown with selectable elements */
 export class LabeledDropdown extends React.Component {
   constructor(props) {
     super(props);
@@ -12,12 +13,12 @@ export class LabeledDropdown extends React.Component {
   }
 
   handleSelect(evtKey) {
-    this.setState({selectedKey: evtKey});
+    this.setState({ selectedKey: evtKey });
     this.props.onSelect(evtKey);
   }
 
   render() {
-    const {inputClass, activeClass, labelStyle, label, width, ...props} = this.props;
+    const { inputClass, activeClass, labelStyle, label, width, ...props } = this.props;
     const currentClass = this.state.focused ? activeClass : inputClass || '';
     const dwidth = width || 400;
 
@@ -32,12 +33,12 @@ export class LabeledDropdown extends React.Component {
         </span>
         <br />
         <div className={currentClass}>
-          <DropdownButton 
-            title={title} 
-            bsStyle='link' 
+          <DropdownButton
+            title={ title }
+            bsStyle='link'
             id='bg-nested-dropdown'
             noCaret
-            onSelect={this.handleSelect}>
+            onSelect={ this.handleSelect }>
             {this.props.listData.map((name, i) => <MenuItem eventKey={i} key={i}>{name}</MenuItem>)}
           </DropdownButton>
         </div>
@@ -45,3 +46,14 @@ export class LabeledDropdown extends React.Component {
     )
   }
 }
+
+const T = React.PropTypes;
+LabeledDropdown.propTypes = {
+  inputClass: T.object,
+  activeClass: T.object,
+  labelStyle: T.object,
+  label: T.string,
+  width: T.number,
+  listData: T.array,
+  onSelect: T.func
+};

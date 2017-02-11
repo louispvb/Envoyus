@@ -1,11 +1,12 @@
 import React from 'react';
 
+/** Optionally labled input with styling */
 export class LInput extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       focused: false,
-      inputValue: '',
+      inputValue: ''
     };
     this.updateInputValue = this.updateInputValue.bind(this);
     this.handleKeyUp = this.handleKeyUp.bind(this);
@@ -13,7 +14,7 @@ export class LInput extends React.Component {
 
   updateInputValue(evt) {
     this.setState({ inputValue: evt.target.value });
-    this.props.onChange && this.props.onChange(evt.target.value);
+    if (this.props.onChange) this.props.onChange(evt.target.value);
   }
 
   handleKeyUp(evt) {
@@ -23,10 +24,9 @@ export class LInput extends React.Component {
   }
 
   render() {
-    const {inputClass, activeClass, showIcon, labelStyle, label, width, ...props} = this.props;
+    const { inputClass, activeClass, labelStyle, label, width, ...props } = this.props;
     const currentClass = this.state.focused ? activeClass : inputClass || 'input-ctn-style';
     const dwidth = width || 400;
-    const icon = showIcon ? <i className="fa fa-search" /> : null;
     return (
       <div style={{ width: dwidth }}>
         {
@@ -39,8 +39,8 @@ export class LInput extends React.Component {
         <div className={ currentClass }>
           <input {...props} type='text' className='input-default'
             value={ this.state.inputValue }
-            onFocus={ () => this.setState({focused: true}) }
-            onBlur={ () => this.setState({focused: false}) }
+            onFocus={ () => this.setState({ focused: true }) }
+            onBlur={ () => this.setState({ focused: false }) }
             onChange= { this.updateInputValue }
             onKeyUp={ this.handleKeyUp } />
         </div>
@@ -48,3 +48,14 @@ export class LInput extends React.Component {
     )
   }
 }
+
+const T = React.PropTypes;
+LInput.propTypes = {
+  onChange: T.func,
+  onSubmit: T.func,
+  inputClass: T.object,
+  activeClass: T.object,
+  labelStyle: T.object,
+  label: T.string,
+  width: T.number
+};

@@ -1,6 +1,7 @@
 import React from 'react';
 import { LOGIN_GATEWAY } from '../../../config/config';
 
+/** Nav links for top right */
 export const NavLinks = props => (
   <div className={props.navLinkCtnClass}>
     <div className={props.navLinkClass}>
@@ -19,3 +20,10 @@ export const NavLinks = props => (
   </div>
 );
 
+const T = React.PropTypes;
+NavLinks.propTypes = {
+  navLinkClass: T.object,
+  navLinkCtnClass: T.object,
+  id: T.number,
+  name: T.string
+};

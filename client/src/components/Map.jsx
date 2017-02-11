@@ -1,8 +1,7 @@
 import Helmet from 'react-helmet';
 import _ from 'lodash';
 import React from 'react';
-import moment from 'moment';
-import { GoogleMapLoader, GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
+import { GoogleMap, Marker, withGoogleMap } from 'react-google-maps';
 
 
 const ShowMap = withGoogleMap(props => (
@@ -10,8 +9,10 @@ const ShowMap = withGoogleMap(props => (
     ref={props.onMapLoad}
     defaultZoom={14}
     defaultCenter={{ lat: -37.783591, lng: 122.408949 }}
-    center={{ lat: Number(props.currentLocation.latitude), lng: Number(props.currentLocation.longitude) }}
-  >
+    center={{
+      lat: Number(props.currentLocation.latitude),
+      lng: Number(props.currentLocation.longitude)
+    }}>
     {props.markers.map((marker, index) => (
       <Marker key={index}
         {...marker}
@@ -21,14 +22,8 @@ const ShowMap = withGoogleMap(props => (
 ));
 
 export class Map extends React.Component {
-  constructor(props) {
-    super(props);
-  }
-
   handleMapLoad(map) {
-    this._mapComponent = map;
-    if (map) {
-    }
+    this.mapComponent = map;
   }
 
   getMarkers() {
@@ -65,3 +60,9 @@ export class Map extends React.Component {
     );
   }
 }
+
+const T = React.PropTypes;
+Map.propTypes = {
+  currentLocation: T.array,
+  listings: T.array
+};
