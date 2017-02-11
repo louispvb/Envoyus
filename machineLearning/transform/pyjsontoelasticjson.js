@@ -93,21 +93,3 @@ json = JSON.parse(json.toString());
     }
   }
 })()
-// var newjson = json.map((listing, i) => {
-//   return machineLearnListing(listing.description).then(output => {
-
-//     listing.specs = output
-//     // console.lo?(output)
-//     return JSON.stringify({ "index": { "_index": "cl", "_type": "listing" }}) + '\n' + JSON.stringify(listing)
-//   })
-// })
-
-// Promise.all(newjson).then(result => {
-//   fs.writeFileSync('finalMacBookProSF_test.json', result.join('\n'))
-// })
-
-// run curl with file name in terminal
-// curl -s -XPOST localhost:9200/_bulk --data-binary @final.json
-// curl -XDELETE localhost:9200/cl
-
-// node --harmony pyjsontoelasticjson.js --in .json --out .json
